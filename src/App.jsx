@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { EnvelopeCover } from './components/EnvelopeCover'
 import { InvitationCard } from './components/InvitationCard'
 import { MusicPlayer } from './components/MusicPlayer'
+import { useAutoScroll } from './hooks/useAutoScroll'
 import { invitation } from './data/invitation'
 
 /** `?to=Name` personalises the envelope greeting for a specific guest. */
@@ -12,8 +13,14 @@ function guestNameFromUrl() {
 
 export default function App() {
   const [opened, setOpened] = useState(false)
-  const [music, setMusic] = useState(false)
   const [guestName] = useState(guestNameFromUrl)
+  const musicRef = useRef(null)
+
+  const { autoScroll } = invitation
+  useAutoScroll(opened && autoScroll.enabled, {
+    pixelsPerSecond: autoScroll.pixelsPerSecond,
+    startDelayMs: autoScroll.startDelayMs,
+  })
 
   /* Lock the page behind the envelope until it is opened. */
   useEffect(() => {
@@ -23,16 +30,20 @@ export default function App() {
     }
   }, [opened])
 
-  const open = () => {
-    setOpened(true)
-    if (invitation.music.src) setMusic(true)
-  }
-
   return (
     <>
       <InvitationCard />
-      {!opened && <EnvelopeCover onOpen={open} guestName={guestName} />}
-      {opened && <MusicPlayer playing={music} onToggle={() => setMusic((m) => !m)} />}
+
+      {!opened && (
+        <EnvelopeCover
+          guestName={guestName}
+          /* Fired inside the click itself, so the browser allows playback. */
+          onBegin={() => musicRef.current?.start()}
+          onOpen={() => setOpened(true)}
+        />
+      )}
+
+      <MusicPlayer ref={musicRef} visible={opened} />
     </>
   )
 }

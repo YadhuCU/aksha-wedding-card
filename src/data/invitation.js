@@ -83,11 +83,25 @@ export const invitation = {
     enabled: true,
   },
 
+  // ----------------------------------------------------------------- scroll
+  // After the envelope opens, the card walks itself down at a reading pace.
+  // Stops for good the moment the guest scrolls, swipes or taps.
+  autoScroll: {
+    enabled: true,
+    pixelsPerSecond: 30, // lower = slower
+    startDelayMs: 1400, // settle on the hero before moving
+  },
+
   // ----------------------------------------------------------------- music
-  // Drop an .mp3 in public/music/ and set the path to show the player.
+  // Drop an .mp3 in public/music/ and point `src` at it.
+  // startTime/endTime pick the stretch that loops, in seconds, so the song
+  // opens on its chorus instead of its intro. Set endTime to null to loop the
+  // whole file. Playback begins on the envelope's Open tap.
   music: {
-    src: './music/bgm.mp3', // e.g. './music/bgm.mp3'
+    src: './music/bgm.mp3',
     volume: 0.5,
+    startTime: 66, // 1:06
+    endTime: 212, // 3:32
   },
 }
 

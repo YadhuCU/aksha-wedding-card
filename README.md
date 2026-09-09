@@ -86,17 +86,47 @@ replace the `load`/`save` functions in `src/components/sections/Guestbook.jsx`
 with calls to Firebase, Supabase or a form service — the rest of the component
 is unchanged. Set `guestbook.enabled: false` to hide the section entirely.
 
-### Background music
+### Auto-scroll
 
-Drop an MP3 into `public/music/` and point to it:
+Once the envelope opens, the card walks itself down at a slow reading pace:
 
 ```js
-music: { src: './music/bgm.mp3', volume: 0.5 }
+autoScroll: { enabled: true, pixelsPerSecond: 30, startDelayMs: 1400 }
 ```
 
-A floating play/pause button appears, and playback starts on the envelope's
-**Open** tap — browsers won't autoplay audio before a real interaction. With
-`src: null` no player renders.
+At 30 px/s the mobile card takes roughly **1 minute 50 seconds** end to end.
+Lower the number to slow it further, or set `enabled: false` to turn it off.
+
+It stops permanently on the guest's first wheel, swipe, tap or keypress — it
+never resumes underneath someone who has started reading, and tapping a photo
+or the music button ends it too. It also does nothing at all under
+`prefers-reduced-motion: reduce`.
+
+### Background music
+
+Configured and working — `public/music/bgm.mp3` starts at **1:06** the moment
+the envelope is opened, and loops the 1:06–3:32 stretch so it never plays back
+into the intro:
+
+```js
+music: {
+  src: './music/bgm.mp3',
+  volume: 0.5,
+  startTime: 66,  // 1:06
+  endTime: 212,   // 3:32
+}
+```
+
+Set `endTime: null` to loop the whole file, or `src: null` to remove the player
+entirely. A floating play/pause button sits bottom-right once the card is open;
+pausing and resuming keeps the position rather than jumping back to `startTime`.
+
+Playback has to begin inside a real user gesture or browsers block it, so the
+`<audio>` element is mounted from the first render and `play()` is called
+synchronously from the **Open** tap — not from an effect afterwards.
+
+`public/music/yt-309a0c59-007.mp3` is a byte-identical duplicate of `bgm.mp3`;
+delete it to save 3.8 MB in the build.
 
 ---
 
@@ -109,6 +139,7 @@ src/
   hooks/
     useParallax.js          Decor drift, rAF-throttled, off-screen aware
     useReveal.js            Fade-up on first scroll into view
+    useAutoScroll.js        Slow walk to the bottom, abandoned on first touch
     useCountdown.js         One-second tick to the wedding
   components/
     EnvelopeCover.jsx       Wax seal, petal burst, fly-forward open sequence
@@ -151,6 +182,7 @@ texture that repeats down its full length.
 | Sections | Background decor drifts at 3.5–10% of scroll, opposite directions per element, throttled to one rAF per frame and idle while off screen |
 | Gallery | Cards fan out on a 1000px perspective — each step from centre shifts 60%, sinks 150px, yaws 45° and loses scale and opacity. Auto-advances only while on screen, pauses on hover, and a manual nudge suspends it for 6s |
 | Content | Sections fade up 18px the first time they scroll into view |
+| Page | Auto-scrolls to the bottom at 30 px/s after opening, surrendering to the guest on their first scroll, swipe or tap |
 
 Everything above collapses under `prefers-reduced-motion: reduce`: parallax and
 autoplay switch off, reveals start visible, and looping animations stop.

@@ -41,7 +41,7 @@ function seeded(seed) {
  * the corner flower sprays rush toward the viewer, and the card itself
  * lifts off the top of the screen — then `onOpen` hands over to the card.
  */
-export function EnvelopeCover({ onOpen, guestName }) {
+export function EnvelopeCover({ onOpen, onBegin, guestName }) {
   const { bride, groom, brideFirst, copy, date } = invitation
   const first = brideFirst ? bride : groom
   const second = brideFirst ? groom : bride
@@ -83,6 +83,10 @@ export function EnvelopeCover({ onOpen, guestName }) {
 
   const open = useCallback(() => {
     if (phase !== 'idle') return
+
+    /* Start the music from inside the gesture, before any state churn. */
+    onBegin?.()
+
     setPhase('opening')
     setBurst(makeBurst())
     window.setTimeout(() => setPhase('away'), 500)
@@ -91,7 +95,7 @@ export function EnvelopeCover({ onOpen, guestName }) {
       handedOver.current = true
       onOpen()
     }, 1300)
-  }, [phase, makeBurst, onOpen])
+  }, [phase, makeBurst, onOpen, onBegin])
 
   const breaking = phase !== 'idle'
 
