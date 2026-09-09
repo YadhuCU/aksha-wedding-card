@@ -8,7 +8,7 @@ import { longDate } from '../lib/date'
  * otherwise just confirms on screen so the flow is never a dead end.
  */
 export function Rsvp() {
-  const { rsvp, bride, groom, date } = invitation
+  const { rsvp, bride, groom, date, whatsAppNumber } = invitation
   const [open, setOpen] = useState(false)
   const [sent, setSent] = useState(false)
   const [form, setForm] = useState({ name: '', attending: 'yes', guests: 1, note: '' })
@@ -35,9 +35,9 @@ export function Rsvp() {
       form.note.trim() ? `Note: ${form.note.trim()}` : null,
     ].filter(Boolean)
 
-    if (rsvp.whatsAppNumber) {
+    if (whatsAppNumber) {
       window.open(
-        `https://wa.me/${rsvp.whatsAppNumber}?text=${encodeURIComponent(lines.join('\n'))}`,
+        `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(lines.join('\n'))}`,
         '_blank',
         'noopener,noreferrer',
       )

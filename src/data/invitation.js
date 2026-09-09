@@ -52,7 +52,9 @@ export const invitation = {
     countdownTitle: 'Countdown',
     addToCalendar: 'Add to Calendar',
     galleryTitle: 'Photo Gallery',
-    guestbookTitle: 'Guestbook',
+    guestbookTitle: 'Send Your Wishes',
+    guestbookSubtitle:
+      'Write a few words for the couple — it will open WhatsApp so you can send it.',
     rsvpButton: 'Confirm',
     thankYouNote:
       'Your presence would be the greatest gift we could receive!',
@@ -68,19 +70,25 @@ export const invitation = {
     { src: './images/gallery/couple-4.jpg' },
   ],
 
+  // -------------------------------------------------------------- whatsapp
+  // ADD YOUR NUMBER HERE. Guest messages are delivered by opening WhatsApp
+  // on the guest's own phone with the text pre-filled, so there is no server
+  // and nothing to pay for. International format, no "+" and no spaces.
+  // While this is empty the guestbook stays hidden rather than showing a
+  // button that goes nowhere.
+  whatsAppNumber: '', // e.g. '919876543210'
+
   // ------------------------------------------------------------------ rsvp
-  // Off: there is no server behind it, so with no number set it told guests
-  // their reply had been noted when nothing was recorded anywhere.
-  // To switch it back on, set enabled: true and fill in whatsAppNumber in
-  // international format, without "+" or spaces (e.g. '919876543210').
+  // Off by request. Switch enabled to true and it uses whatsAppNumber above,
+  // the same way the guestbook does.
   rsvp: {
     enabled: false,
-    whatsAppNumber: '',
     maxGuests: 10,
   },
 
   // ------------------------------------------------------------- guestbook
-  // Wishes are stored in this browser only (localStorage) — see README.
+  // Wishes are sent straight to whatsAppNumber above. They are never shown
+  // on the page — only you read them.
   guestbook: {
     enabled: true,
   },

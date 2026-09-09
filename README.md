@@ -81,14 +81,49 @@ The form then composes the reply and hands it to WhatsApp on submit. Guests
 without WhatsApp are the gap here; a form service or a small backend in
 `src/components/Rsvp.jsx` would cover everyone.
 
-### Guestbook
+### Guestbook — set your WhatsApp number
 
-Wishes are stored in **each visitor's own browser** (`localStorage`), so a guest
-sees only what they themselves wrote. That is a real limitation, not an
-oversight: collecting everyone's messages needs a backend. When you want that,
-replace the `load`/`save` functions in `src/components/sections/Guestbook.jsx`
-with calls to Firebase, Supabase or a form service — the rest of the component
-is unchanged. Set `guestbook.enabled: false` to hide the section entirely.
+Guests write a wish and it is delivered to you over WhatsApp. Wishes are never
+shown on the page; only you read them.
+
+**This needs one line before it appears.** Put your number in
+`src/data/invitation.js`, in international format with no `+` and no spaces:
+
+```js
+whatsAppNumber: '919876543210',
+```
+
+While it is empty the whole section stays hidden, rather than showing a button
+that goes nowhere. The same number is used by the RSVP form if you switch that
+back on.
+
+#### Why it works this way, and what it costs
+
+Nothing. There is no server and no API key, because the *guest's own* WhatsApp
+does the sending: they fill in the form, tap the button, WhatsApp opens with
+the wish already composed and addressed to you, and they press send. It reaches
+you as a normal chat message — so you can reply and thank them, which a bot
+notification could not.
+
+The trade-offs, stated plainly:
+
+- The guest has to press send in WhatsApp. If they abandon it there, you never
+  see the wish, and neither does the site — nothing is stored anywhere.
+- It assumes the guest has WhatsApp. For anyone who does not, the confirmation
+  offers **Copy the message** so they can send it however they like.
+- On desktop it hands off to WhatsApp Web, which needs them to be logged in.
+
+#### Why not a server that pushes WhatsApp to you
+
+Because no free, safe version of that exists. Meta's official Cloud API only
+permits free-form messages inside a 24-hour window that the *other person*
+opened by messaging you first; sending unprompted needs an approved template,
+billed per message. The "free WhatsApp API" services drive a real WhatsApp Web
+session, which breaks WhatsApp's terms and risks your number being banned.
+
+If you later want wishes stored server-side and a real notification, the honest
+options are a Vercel function plus Upstash Redis, or Supabase, with the alert
+sent by email or a Telegram bot — both comfortably free at wedding volume.
 
 ### Auto-scroll
 
