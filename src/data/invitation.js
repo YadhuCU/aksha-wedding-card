@@ -1,0 +1,119 @@
+/**
+ * All wedding content lives here. Nothing else needs editing to change copy.
+ */
+
+export const invitation = {
+  // ---------------------------------------------------------------- couple
+  // brideFirst: true -> the bride's name/family is shown first.
+  brideFirst: true,
+
+  bride: {
+    shortName: 'Laxmi',
+    fullName: 'Laxmi R Das',
+    parentTitle: 'Mr. & Mrs.',
+    father: 'CV Ramadas',
+    mother: 'Radhika K',
+    address: 'SaiMatha, Pinarayi, Kannur.',
+  },
+
+  groom: {
+    shortName: 'Yadu',
+    fullName: 'Yadu Chakravarthy',
+    parentTitle: 'Mr. & Mrs.',
+    father: 'Vinod Kumar KG',
+    mother: 'Sindhu G',
+    address: 'Gopalakrishnam, Kottayampoyil, Kannur.',
+  },
+
+  // ------------------------------------------------------------------ event
+  // ISO date + 24h time, in the venue's local time (IST).
+  date: '2026-10-25',
+  time: '10:30',
+  timeZone: 'Asia/Kolkata',
+
+  venue: {
+    name: 'Pinarayi Convention Centre',
+    address:
+      'Pinarayi Convention Centre, Bus Stand, Proposed Pinarayi,\nThalassery - Irikkur Rd, Pinarayi, Kerala 670741',
+    // Used for the "Open in Google Maps" link.
+    mapsUrl: 'https://maps.app.goo.gl/Dd5fVhrTqhLsy2We8',
+    // Used for the embedded map iframe (no API key needed).
+    embedQuery: 'Pinarayi Convention Centre, Pinarayi, Kerala 670741',
+  },
+
+  // ------------------------------------------------------------------- copy
+  copy: {
+    envelopeGreeting: 'Cordially Invites',
+    openButton: 'Open',
+    ceremonyInfoTitle: 'Ceremony Info',
+    announcement: 'We warmly invite you and your family to the wedding of',
+    receptionInfoTitle: 'Celebration Party Info',
+    receptionAt: 'The celebration will take place at:',
+    countdownTitle: 'Countdown',
+    addToCalendar: 'Add to Calendar',
+    galleryTitle: 'Photo Gallery',
+    guestbookTitle: 'Guestbook',
+    rsvpButton: 'Confirm',
+    thankYouNote:
+      'Your presence would be the greatest gift we could receive!',
+  },
+
+  // --------------------------------------------------------------- gallery
+  // Add or remove entries freely; files live in public/images/gallery/.
+  // A file that is missing is skipped instead of showing a broken image.
+  gallery: [
+    { src: './images/gallery/couple-1.jpg' },
+    { src: './images/gallery/couple-2.jpg' },
+    { src: './images/gallery/couple-3.jpg' },
+    { src: './images/gallery/couple-4.jpg' },
+  ],
+
+  // ------------------------------------------------------------------ rsvp
+  // RSVP has no server. Submitting opens WhatsApp with the reply pre-filled.
+  // Put the number in international format without "+" or spaces.
+  rsvp: {
+    enabled: true,
+    whatsAppNumber: '',
+    maxGuests: 10,
+  },
+
+  // ------------------------------------------------------------- guestbook
+  // Wishes are stored in this browser only (localStorage) — see README.
+  guestbook: {
+    enabled: true,
+  },
+
+  // ----------------------------------------------------------------- music
+  // Drop an .mp3 in public/music/ and set the path to show the player.
+  music: {
+    src: './music/bgm.mp3', // e.g. './music/bgm.mp3'
+    volume: 0.5,
+  },
+}
+
+export const theme = {
+  primary: '#640e1b',
+  secondary: '#ab7a45',
+  background: '#f7e3cd',
+  softLine: 'rgba(171, 122, 69, 0.35)',
+}
+
+const T = './images/theme'
+
+export const decor = {
+  paper: `${T}/paper.webp`,
+  archFrame: `${T}/arch-frame.webp`,
+  bells: `${T}/bells.webp`,
+  ganesha: `${T}/ganesha.webp`,
+  flower1: `${T}/flower1.webp`,
+  flower2: `${T}/flower2.webp`,
+  flower3: `${T}/flower3-decoration.webp`,
+  castle: `${T}/castle.webp`,
+  castle2: `${T}/castle2.webp`,
+  sandstone: `${T}/sandstone.webp`,
+  sandstoneFlower: `${T}/sandstone-flower.webp`,
+  fence: `${T}/fence.webp`,
+  pattern: `${T}/pattern.webp`,
+  goldLine: `${T}/gold-line.webp`,
+  calendarFrame: `${T}/calendar-frame.webp`,
+}
