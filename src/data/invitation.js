@@ -47,7 +47,7 @@ export const invitation = {
     openButton: 'Open',
     ceremonyInfoTitle: 'Ceremony Info',
     announcement: 'We warmly invite you and your family to the wedding of',
-    receptionInfoTitle: 'Celebration Party Info',
+    receptionInfoTitle: 'Wedding Info',
     receptionAt: 'The celebration will take place at:',
     countdownTitle: 'Countdown',
     addToCalendar: 'Add to Calendar',
