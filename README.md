@@ -64,18 +64,22 @@ Append `?to=` to any link and the envelope addresses that guest by name:
 https://your-site.com/?to=Suresh%20%26%20Family
 ```
 
-### RSVP
+### RSVP — currently off
 
-There is no server. On submit, the form composes the reply and hands it to
-WhatsApp. Set the number in `src/data/invitation.js` (international format, no
-`+` or spaces):
+The **Confirm** button is disabled. There is no server behind it, and with no
+number configured it told guests "your response has been noted" while nothing
+was recorded anywhere — worse than having no button at all.
+
+To switch it on, add a WhatsApp number in international format (no `+` or
+spaces) and flip the flag in `src/data/invitation.js`:
 
 ```js
 rsvp: { enabled: true, whatsAppNumber: '919876543210', maxGuests: 10 }
 ```
 
-Leave it blank and the form still confirms on screen — it just won't send
-anywhere. Set `enabled: false` to remove the button.
+The form then composes the reply and hands it to WhatsApp on submit. Guests
+without WhatsApp are the gap here; a form service or a small backend in
+`src/components/Rsvp.jsx` would cover everyone.
 
 ### Guestbook
 

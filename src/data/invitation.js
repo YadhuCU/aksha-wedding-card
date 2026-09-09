@@ -69,10 +69,12 @@ export const invitation = {
   ],
 
   // ------------------------------------------------------------------ rsvp
-  // RSVP has no server. Submitting opens WhatsApp with the reply pre-filled.
-  // Put the number in international format without "+" or spaces.
+  // Off: there is no server behind it, so with no number set it told guests
+  // their reply had been noted when nothing was recorded anywhere.
+  // To switch it back on, set enabled: true and fill in whatsAppNumber in
+  // international format, without "+" or spaces (e.g. '919876543210').
   rsvp: {
-    enabled: true,
+    enabled: false,
     whatsAppNumber: '',
     maxGuests: 10,
   },
