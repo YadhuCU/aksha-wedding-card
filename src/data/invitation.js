@@ -76,8 +76,8 @@ export const invitation = {
   // While endpoint is empty the guestbook stays hidden rather than showing a
   // button that goes nowhere.
   sheet: {
-    endpoint: '', // e.g. 'https://script.google.com/macros/s/AKfy.../exec'
-    token: 'CHANGE_ME', // must match SHARED_TOKEN in google-apps-script/Code.gs
+    endpoint: 'https://script.google.com/macros/s/AKfycbxpfMhKlunIQzhRIJB20uQESrVsyHF9wZO0PeKwBdB6kLpl9r1pwiqjKHjv0k_6qapIFg/exec', // e.g. 'https://script.google.com/macros/s/AKfy.../exec'
+    token: 'ly26-uwwTPxv4UirRExCd', // must match SHARED_TOKEN in google-apps-script/Code.gs
   },
 
   // ------------------------------------------------------------------ rsvp

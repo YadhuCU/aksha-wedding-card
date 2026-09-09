@@ -24,7 +24,7 @@ var NOTIFY_EMAIL = ''
  * read it. It only stops drive-by bots that POST to random endpoints. Real
  * abuse protection would need a captcha or a server you control.
  */
-var SHARED_TOKEN = 'CHANGE_ME'
+var SHARED_TOKEN = 'ly26-uwwTPxv4UirRExCd'
 
 var MAX_NAME = 80
 var MAX_MESSAGE = 1000
@@ -76,6 +76,13 @@ function doGet() {
 }
 
 /* ----------------------------------------------------------------- helpers */
+
+/** Every route answers with JSON through here. */
+function json(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(
+    ContentService.MimeType.JSON
+  )
+}
 
 function trimTo(value, max) {
   return String(value == null ? '' : value).trim().slice(0, max)
