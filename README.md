@@ -66,64 +66,93 @@ https://your-site.com/?to=Suresh%20%26%20Family
 
 ### RSVP — currently off
 
-The **Confirm** button is disabled. There is no server behind it, and with no
-number configured it told guests "your response has been noted" while nothing
-was recorded anywhere — worse than having no button at all.
+The **Confirm** button is disabled at your request. It previously claimed
+"your response has been noted" while nothing was recorded anywhere.
 
-To switch it on, add a WhatsApp number in international format (no `+` or
-spaces) and flip the flag in `src/data/invitation.js`:
+To switch it on, set up the Sheet below and then:
 
 ```js
-rsvp: { enabled: true, whatsAppNumber: '919876543210', maxGuests: 10 }
+rsvp: { enabled: true, maxGuests: 10 }
 ```
 
-The form then composes the reply and hands it to WhatsApp on submit. Guests
-without WhatsApp are the gap here; a form service or a small backend in
-`src/components/Rsvp.jsx` would cover everyone.
+Replies land in the same spreadsheet as the wishes, tagged `rsvp` in the Type
+column, with the attending answer and guest count in the Message column. It
+stays hidden unless both `enabled` is true *and* a sheet endpoint is set, so it
+cannot present a dead button again.
 
-### Guestbook — set your WhatsApp number
+### Guestbook — connect your Google Sheet
 
-Guests write a wish and it is delivered to you over WhatsApp. Wishes are never
-shown on the page; only you read them.
+Guests write a wish and it is appended to your spreadsheet the instant they
+press send. Wishes are never shown on the page; you read them in the Sheet.
 
-**This needs one line before it appears.** Put your number in
-`src/data/invitation.js`, in international format with no `+` and no spaces:
+**It stays hidden until you connect it.** Two values in
+`src/data/invitation.js`:
 
 ```js
-whatsAppNumber: '919876543210',
+sheet: {
+  endpoint: 'https://script.google.com/macros/s/AKfy.../exec',
+  token: 'pick-any-string',
+}
 ```
 
-While it is empty the whole section stays hidden, rather than showing a button
-that goes nowhere. The same number is used by the RSVP form if you switch that
-back on.
+#### Deploying the collector (about five minutes, free)
 
-#### Why it works this way, and what it costs
+1. Create a Google Sheet — call it anything.
+2. **Extensions → Apps Script**. Delete the placeholder code and paste in
+   [`google-apps-script/Code.gs`](google-apps-script/Code.gs) from this repo.
+3. Near the top of that file, set `SHARED_TOKEN` to any string you like, and
+   put the **same** string in `sheet.token` above. Optionally set
+   `NOTIFY_EMAIL` to get an email for every wish.
+4. **Deploy → New deployment → Web app**, with:
+   - *Execute as*: **Me**
+   - *Who has access*: **Anyone**
 
-Nothing. There is no server and no API key, because the *guest's own* WhatsApp
-does the sending: they fill in the form, tap the button, WhatsApp opens with
-the wish already composed and addressed to you, and they press send. It reaches
-you as a normal chat message — so you can reply and thank them, which a bot
-notification could not.
+   "Anyone" is required — your guests are not signed in to your Google
+   account. Google will ask you to authorise the script; the warning screen is
+   expected for your own script.
+5. Copy the deployment URL (it ends in `/exec`) into `sheet.endpoint`.
+6. Redeploy the site. A `Wishes` tab with headers is created on the first
+   submission.
 
-The trade-offs, stated plainly:
+Opening the `/exec` URL in a browser returns
+`{"ok":true,"service":"laxmi-yadu-guestbook"}` — a quick way to confirm the
+deployment is live.
 
-- The guest has to press send in WhatsApp. If they abandon it there, you never
-  see the wish, and neither does the site — nothing is stored anywhere.
-- It assumes the guest has WhatsApp. For anyone who does not, the confirmation
-  offers **Copy the message** so they can send it however they like.
-- On desktop it hands off to WhatsApp Web, which needs them to be logged in.
+After editing `Code.gs` you must **Deploy → Manage deployments → Edit → Deploy**
+again; saving the script alone does not update the live web app.
 
-#### Why not a server that pushes WhatsApp to you
+#### Notes and limits
 
-Because no free, safe version of that exists. Meta's official Cloud API only
-permits free-form messages inside a 24-hour window that the *other person*
-opened by messaging you first; sending unprompted needs an approved template,
-billed per message. The "free WhatsApp API" services drive a real WhatsApp Web
-session, which breaks WhatsApp's terms and risks your number being banned.
+- **The token is not a secret.** It ships in the site's JavaScript and anyone
+  who views source can read it. It only deflects bots that POST at random
+  endpoints. Genuine protection would need a captcha or a server you control.
+- Name and message are capped at 80 and 1000 characters, on both the page and
+  the server.
+- Submissions are serialised with a script lock, so two guests sending at the
+  same moment cannot overwrite each other's row.
+- If sending fails, the guest is told plainly and their text is kept so they
+  can retry — a network failure is invisible otherwise.
+- The request goes out as `text/plain` on purpose. That keeps it a CORS
+  "simple request" so no preflight is sent; Apps Script cannot answer an
+  `OPTIONS` preflight, so `application/json` would be blocked before the POST
+  ever left the browser.
+- The email alert uses your Google account's quota, which is 100 messages a
+  day on a free account — far more than a wedding needs. A quota failure is
+  swallowed so it can never lose a guest's wish.
 
-If you later want wishes stored server-side and a real notification, the honest
-options are a Vercel function plus Upstash Redis, or Supabase, with the alert
-sent by email or a Telegram bot — both comfortably free at wedding volume.
+#### Why not notify WhatsApp directly
+
+No free, safe version of that exists. Meta's official Cloud API only permits
+free-form messages inside a 24-hour window that the *recipient* opens by
+messaging you first; sending unprompted needs an approved template, billed per
+message. The "free WhatsApp API" services drive a real WhatsApp Web session,
+which breaks WhatsApp's terms and risks the number being banned.
+
+An earlier version handed the wish to the guest's own WhatsApp with the text
+pre-filled, which was free and safe but relied on the guest pressing send in
+another app — and a wish abandoned there was lost, with no record anywhere.
+The Sheet removes that gap. For a phone alert, set `NOTIFY_EMAIL`, or add a
+Telegram bot call to `Code.gs`; Telegram is genuinely free and instant.
 
 ### Auto-scroll
 
@@ -175,6 +204,7 @@ delete it to save 3.8 MB in the build.
 src/
   data/invitation.js        All content + palette + decor asset paths
   lib/date.js               Date formatting, Google Calendar link, month grid
+  lib/sheet.js              Posts wishes and RSVPs to the Apps Script endpoint
   hooks/
     useParallax.js          Decor drift, rAF-throttled, off-screen aware
     useReveal.js            Fade-up on first scroll into view
@@ -193,8 +223,11 @@ src/
       Gallery.jsx
       Celebration.jsx       Countdown, framed calendar, add-to-calendar, RSVP
       MapSection.jsx        Venue, embedded map, directions link
-      Guestbook.jsx
+      Guestbook.jsx         Write-only; wishes go to your Google Sheet
       Footer.jsx            Thank-you over the closing palace
+
+google-apps-script/
+  Code.gs                   Deploy to Apps Script; appends each wish to a row
 ```
 
 ### Design notes

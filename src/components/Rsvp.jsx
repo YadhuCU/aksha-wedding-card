@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { invitation, theme } from '../data/invitation'
-import { longDate } from '../lib/date'
+import { submitToSheet } from '../lib/sheet'
 
 /**
- * RSVP has no server behind it. Submitting composes the reply and hands it
- * to WhatsApp when a number is configured in src/data/invitation.js, and
- * otherwise just confirms on screen so the flow is never a dead end.
+ * RSVP replies are appended to the same Google Sheet as the wishes, tagged
+ * 'rsvp'. Off unless both `rsvp.enabled` and a sheet endpoint are set, so it
+ * can never present a button that quietly goes nowhere.
  */
 export function Rsvp() {
-  const { rsvp, bride, groom, date, whatsAppNumber } = invitation
+  const { rsvp, sheet, date } = invitation
   const [open, setOpen] = useState(false)
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState('idle')
   const [form, setForm] = useState({ name: '', attending: 'yes', guests: 1, note: '' })
 
   useEffect(() => {
@@ -20,30 +20,29 @@ export function Rsvp() {
     return () => document.removeEventListener('keydown', onKey)
   }, [open])
 
-  if (!rsvp.enabled) return null
+  if (!rsvp.enabled || !sheet.endpoint) return null
 
-  const submit = (e) => {
+  const submit = async (e) => {
     e.preventDefault()
     if (!form.name.trim()) return
 
-    const lines = [
-      `RSVP — ${bride.shortName} & ${groom.shortName}, ${longDate(date)}`,
-      `Name: ${form.name.trim()}`,
+    const attending =
       form.attending === 'yes'
-        ? `Attending: Yes (${form.guests} ${form.guests === 1 ? 'guest' : 'guests'})`
-        : 'Attending: Unable to make it',
-      form.note.trim() ? `Note: ${form.note.trim()}` : null,
-    ].filter(Boolean)
+        ? `Attending: yes (${form.guests} ${form.guests === 1 ? 'guest' : 'guests'})`
+        : 'Attending: unable to make it'
 
-    if (whatsAppNumber) {
-      window.open(
-        `https://wa.me/${whatsAppNumber}?text=${encodeURIComponent(lines.join('\n'))}`,
-        '_blank',
-        'noopener,noreferrer',
-      )
+    setStatus('sending')
+    try {
+      await submitToSheet({
+        kind: 'rsvp',
+        name: form.name.trim(),
+        message: [attending, form.note.trim()].filter(Boolean).join(' — '),
+      })
+      setStatus('sent')
+      setOpen(false)
+    } catch {
+      setStatus('error')
     }
-    setSent(true)
-    setOpen(false)
   }
 
   const field =
@@ -51,7 +50,7 @@ export function Rsvp() {
 
   return (
     <div className="relative z-10 mt-7 flex w-full flex-col items-center justify-center md:mt-9">
-      {sent ? (
+      {status === 'sent' ? (
         <p
           className="rounded-md border px-5 py-3 text-center text-[14px]"
           style={{
@@ -176,21 +175,36 @@ export function Rsvp() {
               />
             </label>
 
+            {status === 'error' && (
+              <p
+                className="mb-3 rounded-md border px-3 py-2 text-center text-[12px]"
+                style={{
+                  borderColor: theme.primary,
+                  color: theme.primary,
+                  fontFamily: 'var(--f-sans)',
+                }}
+              >
+                That didn&rsquo;t send. Please check your connection and try again.
+              </p>
+            )}
+
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="flex-1 rounded-full border px-4 py-2 text-[13px] uppercase"
+                disabled={status === 'sending'}
+                className="flex-1 rounded-full border px-4 py-2 text-[13px] uppercase disabled:opacity-60"
                 style={{ borderColor: theme.secondary, color: theme.secondary }}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="flex-1 rounded-full px-4 py-2 text-[13px] tracking-wider uppercase"
+                disabled={status === 'sending'}
+                className="flex-1 rounded-full px-4 py-2 text-[13px] tracking-wider uppercase disabled:opacity-70"
                 style={{ backgroundColor: theme.primary, color: '#ffffff' }}
               >
-                Send
+                {status === 'sending' ? 'Sending…' : 'Send'}
               </button>
             </div>
           </form>

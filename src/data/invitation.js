@@ -53,8 +53,7 @@ export const invitation = {
     addToCalendar: 'Add to Calendar',
     galleryTitle: 'Photo Gallery',
     guestbookTitle: 'Send Your Wishes',
-    guestbookSubtitle:
-      'Write a few words for the couple — it will open WhatsApp so you can send it.',
+    guestbookSubtitle: 'Write a few words for the couple — we would love to read them.',
     rsvpButton: 'Confirm',
     thankYouNote:
       'Your presence would be the greatest gift we could receive!',
@@ -70,25 +69,28 @@ export const invitation = {
     { src: './images/gallery/couple-4.jpg' },
   ],
 
-  // -------------------------------------------------------------- whatsapp
-  // ADD YOUR NUMBER HERE. Guest messages are delivered by opening WhatsApp
-  // on the guest's own phone with the text pre-filled, so there is no server
-  // and nothing to pay for. International format, no "+" and no spaces.
-  // While this is empty the guestbook stays hidden rather than showing a
+  // ----------------------------------------------------------------- sheet
+  // PASTE YOUR APPS SCRIPT URL HERE. Wishes are written straight to your
+  // Google Sheet when a guest presses send, so nothing depends on them
+  // finishing in another app. Deployment steps are in the README.
+  // While endpoint is empty the guestbook stays hidden rather than showing a
   // button that goes nowhere.
-  whatsAppNumber: '', // e.g. '919876543210'
+  sheet: {
+    endpoint: '', // e.g. 'https://script.google.com/macros/s/AKfy.../exec'
+    token: 'CHANGE_ME', // must match SHARED_TOKEN in google-apps-script/Code.gs
+  },
 
   // ------------------------------------------------------------------ rsvp
-  // Off by request. Switch enabled to true and it uses whatsAppNumber above,
-  // the same way the guestbook does.
+  // Off by request. Switch enabled to true and replies land in the same
+  // sheet as the wishes, tagged 'rsvp'.
   rsvp: {
     enabled: false,
     maxGuests: 10,
   },
 
   // ------------------------------------------------------------- guestbook
-  // Wishes are sent straight to whatsAppNumber above. They are never shown
-  // on the page — only you read them.
+  // Wishes go to your Google Sheet. They are never shown on the page —
+  // only you read them.
   guestbook: {
     enabled: true,
   },
