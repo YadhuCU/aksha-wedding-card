@@ -45,9 +45,9 @@ export const invitation = {
   copy: {
     envelopeGreeting: 'Cordially Invites',
     openButton: 'Open',
-    ceremonyInfoTitle: 'Ceremony Info',
+    ceremonyInfoTitle: 'Wedding Info',
     announcement: 'We warmly invite you and your family to the wedding of',
-    receptionInfoTitle: 'Wedding Info',
+    receptionInfoTitle: 'Wedding Info', // hided
     receptionAt: 'The celebration will take place at:',
     countdownTitle: 'Countdown',
     addToCalendar: 'Add to Calendar',

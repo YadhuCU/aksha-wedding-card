@@ -57,7 +57,7 @@ export function Celebration() {
         ref={reveal}
         className="reveal relative z-10 flex w-full flex-col items-center"
       >
-        <SectionTitle>{copy.receptionInfoTitle}</SectionTitle>
+        {/* <SectionTitle>{copy.receptionInfoTitle}</SectionTitle> */}
 
         <div
           className="mt-6 flex w-full flex-col items-center gap-4 text-center md:mt-8"

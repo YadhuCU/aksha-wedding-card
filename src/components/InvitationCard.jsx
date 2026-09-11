@@ -62,15 +62,14 @@ export function InvitationCard() {
             opacity: 0.4,
           }}
         />
-
         <Hero />
         <CeremonyInfo />
+        <Celebration />
+        <MapSection />
         <Gallery
           images={images}
           onImageClick={(index) => setLightbox({ open: true, index })}
         />
-        <Celebration />
-        <MapSection />
         <Guestbook />
         <Footer />
       </div>
