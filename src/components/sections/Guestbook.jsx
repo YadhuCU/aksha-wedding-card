@@ -18,7 +18,8 @@ import { invitation, theme } from '../../data/invitation'
  */
 export function Guestbook() {
   const { copy, guestbook, sheet, bride, groom } = invitation
-  const [form, setForm] = useState({ name: '', message: '' })
+  const guestOptions = Array.from({ length: guestbook.maxGuests }, (_, i) => i + 1)
+  const [form, setForm] = useState({ name: '', guests: '', message: '' })
   const [status, setStatus] = useState('idle') // idle | sending | sent | error
   const reveal = useReveal()
 
@@ -26,13 +27,14 @@ export function Guestbook() {
 
   const submit = async (e) => {
     e.preventDefault()
-    if (!form.name.trim() || !form.message.trim()) return
+    if (!form.name.trim() || !form.guests || !form.message.trim()) return
 
     setStatus('sending')
     try {
       await submitToSheet({
         kind: 'wish',
         name: form.name.trim(),
+        guests: Number(form.guests),
         message: form.message.trim(),
       })
       setStatus('sent')
@@ -59,10 +61,17 @@ export function Guestbook() {
         <SectionTitle className="mb-2">{copy.guestbookTitle}</SectionTitle>
 
         <p
-          className="mx-auto mb-5 max-w-[420px] text-center text-[12px] md:text-[14px]"
+          className="mx-auto mb-1 max-w-[420px] text-center text-[12px] md:text-[14px]"
           style={{ color: theme.secondary, fontFamily: 'var(--f-sans)' }}
         >
           {copy.guestbookSubtitle}
+        </p>
+
+        <p
+          className="mx-auto mb-5 max-w-[420px] text-center text-[12px] tracking-[0.08em] md:text-[13px]"
+          style={{ color: theme.primary, fontFamily: 'var(--f-serif)' }}
+        >
+          {copy.guestbookCompliments}
         </p>
 
         {status === 'sent' ? (
@@ -87,7 +96,7 @@ export function Guestbook() {
             <button
               type="button"
               onClick={() => {
-                setForm({ name: '', message: '' })
+                setForm({ name: '', guests: '', message: '' })
                 setStatus('idle')
               }}
               className="text-[12px] underline decoration-1 underline-offset-4 transition-opacity hover:opacity-70"
@@ -108,6 +117,25 @@ export function Guestbook() {
               className={field}
               style={fieldStyle}
             />
+            <select
+              required
+              disabled={status === 'sending'}
+              value={form.guests}
+              onChange={(e) => setForm({ ...form, guests: e.target.value })}
+              aria-label={copy.guestbookGuestsLabel}
+              className={field}
+              style={{ ...fieldStyle, color: form.guests ? theme.primary : '#9a9a9a' }}
+            >
+              <option value="" disabled>
+                {copy.guestbookGuestsLabel}
+              </option>
+              {guestOptions.map((n) => (
+                <option key={n} value={n} style={{ color: theme.primary }}>
+                  {n} Person
+                </option>
+              ))}
+            </select>
+
             <textarea
               required
               rows={3}

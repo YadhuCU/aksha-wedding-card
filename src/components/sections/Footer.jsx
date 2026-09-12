@@ -15,12 +15,14 @@ export function Footer() {
         ref={reveal}
         className="reveal relative z-20 flex flex-col items-center px-[9%] pb-[62%] text-center md:px-[14%] md:pb-[44%]"
       >
-        <span
-          className="mx-auto flex flex-col items-center gap-1 text-[11px] whitespace-pre-line md:max-w-[560px] md:text-[14px]"
-          style={{ color: theme.primary, fontFamily: 'var(--f-sans)', fontWeight: 500 }}
-        >
-          {copy.thankYouNote}
-        </span>
+        {copy.thankYouNote && (
+          <span
+            className="mx-auto flex flex-col items-center gap-1 text-[11px] whitespace-pre-line md:max-w-[560px] md:text-[14px]"
+            style={{ color: theme.primary, fontFamily: 'var(--f-sans)', fontWeight: 500 }}
+          >
+            {copy.thankYouNote}
+          </span>
+        )}
 
         <div className="mt-6 flex items-center justify-center gap-3 md:mt-8">
           <div

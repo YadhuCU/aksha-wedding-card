@@ -36,6 +36,7 @@ export function Rsvp() {
       await submitToSheet({
         kind: 'rsvp',
         name: form.name.trim(),
+        guests: form.attending === 'yes' ? Number(form.guests) : 0,
         message: [attending, form.note.trim()].filter(Boolean).join(' — '),
       })
       setStatus('sent')

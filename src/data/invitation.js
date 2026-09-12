@@ -52,11 +52,14 @@ export const invitation = {
     countdownTitle: 'Countdown',
     addToCalendar: 'Add to Calendar',
     galleryTitle: 'Photo Gallery',
-    guestbookTitle: 'Send Your Wishes',
-    guestbookSubtitle: 'Write a few words for the couple — we would love to read them.',
+    guestbookTitle: 'Mark Your Presence',
+    guestbookSubtitle: 'Your presence would be the greatest gift we could receive',
+    guestbookCompliments: 'With best compliments',
+    guestbookGuestsLabel: 'Total guests attending',
     rsvpButton: 'Confirm',
-    thankYouNote:
-      'Your presence would be the greatest gift we could receive!',
+    // Blank because this exact sentence is now the heading of the form just
+    // above the footer. Put text back here to show a closing line again.
+    thankYouNote: '',
   },
 
   // --------------------------------------------------------------- gallery
@@ -93,6 +96,7 @@ export const invitation = {
   // only you read them.
   guestbook: {
     enabled: true,
+    maxGuests: 10, // dropdown runs from 1 to this number
   },
 
   // ----------------------------------------------------------------- scroll

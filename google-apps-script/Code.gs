@@ -14,6 +14,9 @@
 /** Tab the rows are written to. Created automatically if missing. */
 var SHEET_NAME = 'Wishes'
 
+/** Columns written, by name. Missing ones are added to an existing sheet. */
+var HEADERS = ['Received', 'Type', 'Name', 'Guests', 'Message']
+
 /** Set an address to also receive an email per submission. '' disables it. */
 var NOTIFY_EMAIL = ''
 
@@ -46,6 +49,7 @@ function doPost(e) {
     var name = trimTo(body.name, MAX_NAME)
     var message = trimTo(body.message, MAX_MESSAGE)
     var kind = trimTo(body.kind, 20) || 'wish'
+    var guests = toGuestCount(body.guests)
 
     if (!name || !message) {
       return json({ ok: false, error: 'name and message are required' })
@@ -55,13 +59,19 @@ function doPost(e) {
     var lock = LockService.getScriptLock()
     lock.waitLock(20000)
     try {
-      getSheet().appendRow([new Date(), kind, name, message])
+      appendSubmission({
+        Received: new Date(),
+        Type: kind,
+        Name: name,
+        Guests: guests,
+        Message: message,
+      })
     } finally {
       lock.releaseLock()
     }
 
     if (NOTIFY_EMAIL) {
-      notify(kind, name, message)
+      notify(kind, name, message, guests)
     }
 
     return json({ ok: true })
@@ -94,22 +104,70 @@ function getSheet() {
 
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME)
-    sheet.appendRow(['Received', 'Type', 'Name', 'Message'])
+    sheet.appendRow(HEADERS)
     sheet.setFrozenRows(1)
-    sheet.getRange('A1:D1').setFontWeight('bold')
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold')
     sheet.setColumnWidth(1, 160)
-    sheet.setColumnWidth(4, 520)
+    sheet.setColumnWidth(HEADERS.length, 520)
+    return sheet
   }
 
+  addMissingColumns(sheet)
   return sheet
 }
 
-function notify(kind, name, message) {
+/**
+ * A sheet created before a column existed keeps working: anything in HEADERS
+ * that is not already a header is appended on the right, leaving older rows
+ * blank in that column rather than shifting their data.
+ */
+function addMissingColumns(sheet) {
+  var header = readHeader(sheet)
+
+  for (var i = 0; i < HEADERS.length; i++) {
+    if (header.indexOf(HEADERS[i]) !== -1) continue
+
+    var column = sheet.getLastColumn() + 1
+    sheet.getRange(1, column).setValue(HEADERS[i]).setFontWeight('bold')
+    header.push(HEADERS[i])
+  }
+}
+
+function readHeader(sheet) {
+  var width = Math.max(1, sheet.getLastColumn())
+  return sheet.getRange(1, 1, 1, width).getValues()[0]
+}
+
+/** Places each value under its own header, whatever order the columns are in. */
+function appendSubmission(values) {
+  var sheet = getSheet()
+  var header = readHeader(sheet)
+
+  var row = header.map(function (name) {
+    return values[name] === undefined ? '' : values[name]
+  })
+
+  sheet.appendRow(row)
+}
+
+/** 1-10, as a number so the column can be summed. Anything else becomes ''. */
+function toGuestCount(value) {
+  var n = parseInt(value, 10)
+  if (isNaN(n) || n < 1) return ''
+  return Math.min(n, 10)
+}
+
+function notify(kind, name, message, guests) {
   try {
     MailApp.sendEmail({
       to: NOTIFY_EMAIL,
       subject: 'New ' + kind + ' from ' + name,
-      body: name + ' wrote:\n\n' + message + '\n\n— Laxmi & Yadu invitation',
+      body:
+        name +
+        (guests ? ' (' + guests + (guests === 1 ? ' person' : ' people') + ')' : '') +
+        ' wrote:\n\n' +
+        message +
+        '\n\n— Laxmi & Yadu invitation',
     })
   } catch (err) {
     /* Never fail the guest's submission over a mail quota. */
