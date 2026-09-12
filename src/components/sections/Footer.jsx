@@ -24,7 +24,16 @@ export function Footer() {
           </span>
         )}
 
-        <div className="mt-6 flex items-center justify-center gap-3 md:mt-8">
+        {copy.footerCompliments && (
+          <p
+            className="mx-auto text-center text-[12px] tracking-[0.08em] md:text-[13px]"
+            style={{ color: theme.primary, fontFamily: 'var(--f-serif)' }}
+          >
+            {copy.footerCompliments}
+          </p>
+        )}
+
+        <div className="mt-2 flex items-center justify-center gap-3 md:mt-3">
           <div
             className="h-px w-10"
             style={{ background: `linear-gradient(to right, transparent, ${theme.secondary})` }}

@@ -61,17 +61,10 @@ export function Guestbook() {
         <SectionTitle className="mb-2">{copy.guestbookTitle}</SectionTitle>
 
         <p
-          className="mx-auto mb-1 max-w-[420px] text-center text-[12px] md:text-[14px]"
+          className="mx-auto mb-5 max-w-[420px] text-center text-[12px] md:text-[14px]"
           style={{ color: theme.secondary, fontFamily: 'var(--f-sans)' }}
         >
           {copy.guestbookSubtitle}
-        </p>
-
-        <p
-          className="mx-auto mb-5 max-w-[420px] text-center text-[12px] tracking-[0.08em] md:text-[13px]"
-          style={{ color: theme.primary, fontFamily: 'var(--f-serif)' }}
-        >
-          {copy.guestbookCompliments}
         </p>
 
         {status === 'sent' ? (

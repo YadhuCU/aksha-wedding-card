@@ -34,7 +34,7 @@ export const invitation = {
   venue: {
     name: 'Pinarayi Convention Centre',
     address:
-      'Pinarayi Convention Centre, Bus Stand, Proposed Pinarayi,\nThalassery - Irikkur Rd, Pinarayi, Kerala 670741',
+      'Pinarayi Convention Centre, Pinarayi, Kannur',
     // Used for the "Open in Google Maps" link.
     mapsUrl: 'https://maps.app.goo.gl/Dd5fVhrTqhLsy2We8',
     // Used for the embedded map iframe (no API key needed).
@@ -48,13 +48,13 @@ export const invitation = {
     ceremonyInfoTitle: 'Wedding Info',
     announcement: 'We warmly invite you and your family to the wedding of',
     receptionInfoTitle: 'Wedding Info', // hided
-    receptionAt: 'The celebration will take place at:',
+    receptionAt: 'The wedding will take place at:',
     countdownTitle: 'Countdown',
     addToCalendar: 'Add to Calendar',
     galleryTitle: 'Photo Gallery',
     guestbookTitle: 'Mark Your Presence',
     guestbookSubtitle: 'Your presence would be the greatest gift we could receive',
-    guestbookCompliments: 'With best compliments',
+    footerCompliments: 'With best compliments',
     guestbookGuestsLabel: 'Total guests attending',
     // Signature in the closing panel, under the thank-you.
     footerSignature: 'Akshay',
