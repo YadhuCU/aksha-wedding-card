@@ -56,6 +56,8 @@ export const invitation = {
     guestbookSubtitle: 'Your presence would be the greatest gift we could receive',
     guestbookCompliments: 'With best compliments',
     guestbookGuestsLabel: 'Total guests attending',
+    // Signature in the closing panel, under the thank-you.
+    footerSignature: 'Akshay',
     rsvpButton: 'Confirm',
     // Blank because this exact sentence is now the heading of the form just
     // above the footer. Put text back here to show a closing line again.

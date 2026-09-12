@@ -6,7 +6,7 @@ import { decor, invitation, theme } from '../../data/invitation'
  * mirroring the hero so the card reads as one continuous landscape.
  */
 export function Footer() {
-  const { copy, bride, groom } = invitation
+  const { copy } = invitation
   const reveal = useReveal()
 
   return (
@@ -33,7 +33,7 @@ export function Footer() {
             className="text-[26px] leading-none"
             style={{ color: theme.primary, fontFamily: 'var(--f-brush)' }}
           >
-            {bride.shortName} &amp; {groom.shortName}
+            {copy.footerSignature}
           </span>
           <div
             className="h-px w-10"
